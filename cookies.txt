@@ -1,0 +1,29 @@
+[
+    {
+        "domain": ".bilibili.com",
+        "expiry": 1665389847,
+        "httpOnly": false,
+        "name": "bili_jct",
+        "path": "/",
+        "secure": false,
+        "value": ""
+    },
+    {
+        "domain": ".bilibili.com",
+        "expiry": 1665389847,
+        "httpOnly": true,
+        "name": "SESSDATA",
+        "path": "/",
+        "secure": false,
+        "value": ""
+    },
+    {
+        "domain": ".bilibili.com",
+        "expiry": 1665389847,
+        "httpOnly": false,
+        "name": "DedeUserID",
+        "path": "/",
+        "secure": false,
+        "value": ""
+    }
+]

@@ -25,7 +25,7 @@
 * 使用python3.7或以上版本
 * 克隆或下载本项目，使用`pip install selenium`安装依赖
 * 自行安装 `Chrome` 与 `Chrome Driver`
-* 运行脚本
+* 运行脚本(`judgement-new.py`)
 
 ## 如何登陆阿b的账号
 

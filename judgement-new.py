@@ -1,4 +1,4 @@
-﻿from selenium import webdriver
+from selenium import webdriver
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -136,6 +136,10 @@ while True:
             browser.find_elements_by_xpath('//span[@class="b-icon-close"]')[0].click()#叉叉
             sleep(0.5)
         except:
+            try:
+                browser.find_elements_by_xpath('//span[@class="b-icon-close"]')[0].click()#叉叉
+            except:
+                pos=1
             pos=1
         if pos==1:
             browser.find_elements_by_xpath('//button[@class="btn-vote mt_sm v-btn v-btn--plain v-btn--round v-btn--info v-btn--medium"]')[0].click()#好

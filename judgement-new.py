@@ -105,9 +105,9 @@ def calc_comment_seg(comment_list):
         num=num+weight
     seg=seg/num
     print(seg)
-    if seg>0.6:
+    if seg>0.5:
         return 1
-    elif seg<0.4:
+    elif seg<0.3:
         return -1
     else:
         return 0

@@ -63,21 +63,6 @@ def loginUseCookie():
     browser.refresh()
 
 
-loginUseCookie()
-# loginUsePasswd()
-
-while True:
-    sleep(0.3)
-    try:
-        element1 = browser.find_element(
-            'xpath', '//button[@class="btn-action b-btn-blue-old v-btn v-btn--primary v-btn--large"]')  # 开始众议按钮
-    except NoSuchElementException as e:
-        print("等待加载")
-    else:
-        print("开始众议按钮")
-        break
-
-
 def get_comment(browser):
     sleep(0.5)
     js = 'document.getElementsByClassName("v-dialog__body")[0].scrollBy(0,5000)'
@@ -120,10 +105,30 @@ def calc_comment_seg(comment_list):
         return 0
 
 
-sleep(0.5)
-element1.click()
-count = 0
+loginUseCookie()
+# loginUsePasswd()
+
 isExit = False
+retry_time = 0
+while True:
+    sleep(0.3)
+    try:
+        element1 = browser.find_element(
+            'xpath', '//button[@class="btn-action b-btn-blue-old v-btn v-btn--primary v-btn--large"]')  # 开始众议按钮
+    except NoSuchElementException as e:
+        print("等待加载")
+    else:
+        print("开始众议按钮")
+        sleep(0.5)
+        element1.click()
+        break
+    retry_time = retry_time + 1
+    if retry_time > 500:
+        isExit = True
+        break
+
+
+count = 0
 while not isExit:
     sleep(5)
     try:

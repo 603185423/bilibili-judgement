@@ -1,3 +1,5 @@
+import sys
+
 from selenium import webdriver
 from time import sleep
 from selenium import webdriver
@@ -26,11 +28,11 @@ browser = Chrome(options=option)
 
 def loginUsePasswd():
     browser.get("https://passport.bilibili.com/login")
-    browser.find_element('xpath', '//input[@placeholder="你的手机号/邮箱"]').send_keys(USER_NAME)
-    browser.find_element('xpath', '//input[@placeholder="密码"]').send_keys(PASSWD)
-    browser.find_element('xpath', '//*[contains(text(),"记住我")]').click()
+    browser.find_element('xpath', '//input[@placeholder="请输入账号"]').send_keys(USER_NAME)
+    browser.find_element('xpath', '//input[@placeholder="请输入密码"]').send_keys(PASSWD)
+    browser.find_element('xpath', '//input[@type="checkbox"]').click()
     sleep(1)
-    browser.find_element('xpath', '//a[text()="登录"]').click()
+    browser.find_element('xpath', '//*[@class="btn_wp"]/*[contains(text(),"登录")]').click()
     count = 0
     while True:
         sleep(1)
@@ -105,8 +107,8 @@ def calc_comment_seg(comment_list):
         return 0
 
 
-loginUseCookie()
-# loginUsePasswd()
+# loginUseCookie()
+loginUsePasswd()
 
 isExit = False
 retry_time = 0
@@ -199,4 +201,4 @@ while not isExit:
     except NoSuchElementException as e:
         print("等待加载2")
 browser.close()
-
+sys.exit(0)

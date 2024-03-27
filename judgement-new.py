@@ -12,6 +12,7 @@ from selenium.common.exceptions import ElementClickInterceptedException
 import time
 import json
 from snownlp import SnowNLP
+import requests
 
 COOKIE_PATH = r".\cookies.txt"
 AUTO_SAVE_COOKIE = True
@@ -26,11 +27,18 @@ browser = Chrome(options=option)
 
 # browser = webdriver.Chrome()
 
+def save_cookie():
+    if AUTO_SAVE_COOKIE is False:
+        return
+    with open(COOKIE_PATH, 'w') as f:
+        f.write(json.dumps(browser.get_cookies()))
+
+
 def loginUsePasswd():
     browser.get("https://passport.bilibili.com/login")
     browser.find_element('xpath', '//input[@placeholder="请输入账号"]').send_keys(USER_NAME)
     browser.find_element('xpath', '//input[@placeholder="请输入密码"]').send_keys(PASSWD)
-    browser.find_element('xpath', '//input[@type="checkbox"]').click()
+    # browser.find_element('xpath', '//input[@type="checkbox"]').click()
     sleep(1)
     browser.find_element('xpath', '//*[@class="btn_wp"]/*[contains(text(),"登录")]').click()
     count = 0
@@ -50,9 +58,7 @@ def loginUsePasswd():
         #     print("ss")
         #     break
     browser.get("https://www.bilibili.com/judgement/index")
-    if AUTO_SAVE_COOKIE is True:
-        with open(COOKIE_PATH, 'w') as f:
-            f.write(json.dumps(browser.get_cookies()))
+    save_cookie()
 
 
 def loginUseCookie():
@@ -77,7 +83,7 @@ def get_comment(browser):
         browser.execute_script(js)
         sleep(0.2)
     comment_div_list = browser.find_elements('xpath',
-                                            '//div[@class="fjw-point-item mb_sm"]/div[@class="item-content"]')  # 每条评论的div
+                                             '//div[@class="fjw-point-item mb_sm"]/div[@class="item-content"]')  # 每条评论的div
     comment_list = []  # （评论，赞同，反对）
     for i in comment_div_list:
         comment_list.append((i.find_element('xpath', './p[@class="b_text content-message"]').text,
@@ -107,8 +113,20 @@ def calc_comment_seg(comment_list):
         return 0
 
 
-# loginUseCookie()
-loginUsePasswd()
+def send_notification(title, desp):
+    api_url = "https://sctapi.ftqq.com/***.send"
+    data = {
+        "title": title,
+        "desp": desp
+    }
+    try:
+        response = requests.post(api_url, data=data)
+    except Exception as e:
+        print("发送通知时出现异常：", str(e))
+
+
+loginUseCookie()
+# loginUsePasswd()
 
 isExit = False
 retry_time = 0
@@ -129,7 +147,6 @@ while True:
         isExit = True
         break
 
-
 count = 0
 while not isExit:
     sleep(5)
@@ -146,7 +163,7 @@ while not isExit:
         pos = 0
         try:
             browser.find_elements('xpath',
-                                 '//button[@class="b-btn-fade mt_lg v-btn v-btn--plain v-btn--block v-btn--round v-btn--info v-btn--large"]')[
+                                  '//button[@class="b-btn-fade mt_lg v-btn v-btn--plain v-btn--block v-btn--round v-btn--info v-btn--large"]')[
                 0].click()  # 查看更多
             sleep(0.5)
             pos = calc_comment_seg(get_comment(browser))
@@ -160,24 +177,24 @@ while not isExit:
             pos = 1
         if pos == 1:
             browser.find_elements('xpath',
-                                 '//button[@class="btn-vote mt_sm v-btn v-btn--plain v-btn--round v-btn--info v-btn--medium"]')[
+                                  '//button[@class="btn-vote mt_sm v-btn v-btn--plain v-btn--round v-btn--info v-btn--medium"]')[
                 0].click()  # 好
         elif pos == 0:
             browser.find_elements('xpath',
-                                 '//button[@class="btn-vote mt_sm v-btn v-btn--plain v-btn--round v-btn--info v-btn--medium"]')[
+                                  '//button[@class="btn-vote mt_sm v-btn v-btn--plain v-btn--round v-btn--info v-btn--medium"]')[
                 1].click()  # 一般
         elif pos == -1:
             browser.find_elements('xpath',
-                                 '//button[@class="btn-vote mt_sm v-btn v-btn--plain v-btn--round v-btn--info v-btn--medium"]')[
+                                  '//button[@class="btn-vote mt_sm v-btn v-btn--plain v-btn--round v-btn--info v-btn--medium"]')[
                 2].click()  # 差
         else:
             browser.find_elements('xpath',
-                                 '//button[@class="btn-vote mt_sm v-btn v-btn--plain v-btn--round v-btn--info v-btn--medium"]')[
+                                  '//button[@class="btn-vote mt_sm v-btn v-btn--plain v-btn--round v-btn--info v-btn--medium"]')[
                 3].click()  # 无法判断
         # browser.find_elements_by_xpath('//button[@class="btn-vote mt_sm v-btn v-btn--plain v-btn--round v-btn--info v-btn--medium"]')[0].click()#好
         sleep(0.5)
         browser.find_elements('xpath',
-                             '//button[@class="btn-vote mt_sm v-btn v-btn--plain v-btn--round v-btn--info v-btn--small"]')[
+                              '//button[@class="btn-vote mt_sm v-btn v-btn--plain v-btn--round v-btn--info v-btn--small"]')[
             1].click()  # 不会观看
         sleep(0.5)
         browser.find_elements('xpath', '//div[@class="v-check-box__text"]')[0].click()  # 匿名发布
@@ -200,5 +217,9 @@ while not isExit:
                 break
     except NoSuchElementException as e:
         print("等待加载2")
+
+browser.get("https://www.bilibili.com/judgement/index")
+save_cookie()
+send_notification("task finish", "Finish bili-judgement")
 browser.close()
 sys.exit(0)

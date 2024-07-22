@@ -11,14 +11,14 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import ElementClickInterceptedException
 import time
 import json
+
+from Utils.config import ConfigManager, write_plugin_data
+from Utils.notify import send_notification, beat_once
 from snownlp import SnowNLP
 import requests
 
-COOKIE_PATH = r".\cookies.txt"
-AUTO_SAVE_COOKIE = True
+config = ConfigManager().data_obj
 
-USER_NAME = ''
-PASSWD = ''
 
 option = ChromeOptions()
 option.add_experimental_option('excludeSwitches', ['enable-automation', 'enable-logging'])
@@ -28,16 +28,16 @@ browser = Chrome(options=option)
 # browser = webdriver.Chrome()
 
 def save_cookie():
-    if AUTO_SAVE_COOKIE is False:
+    if not config.preference.auto_save_cookies:
         return
-    with open(COOKIE_PATH, 'w') as f:
-        f.write(json.dumps(browser.get_cookies()))
+    config.account[0].cookies = json.dumps(browser.get_cookies())
+    write_plugin_data()
 
 
 def loginUsePasswd():
     browser.get("https://passport.bilibili.com/login")
-    browser.find_element('xpath', '//input[@placeholder="请输入账号"]').send_keys(USER_NAME)
-    browser.find_element('xpath', '//input[@placeholder="请输入密码"]').send_keys(PASSWD)
+    browser.find_element('xpath', '//input[@placeholder="请输入账号"]').send_keys(config.account[0].username)
+    browser.find_element('xpath', '//input[@placeholder="请输入密码"]').send_keys(config.account[0].password)
     # browser.find_element('xpath', '//input[@type="checkbox"]').click()
     sleep(1)
     browser.find_element('xpath', '//*[@class="btn_wp"]/*[contains(text(),"登录")]').click()
@@ -64,11 +64,12 @@ def loginUsePasswd():
 def loginUseCookie():
     browser.get("https://www.bilibili.com/judgement/index")
     browser.delete_all_cookies()
-    with open(COOKIE_PATH, 'r') as f:
-        cookies_list = json.load(f)
-        for cookie in cookies_list:
-            browser.add_cookie(cookie)
+    cookies_list = json.load(config.account[0].cookies)
+    for cookie in cookies_list:
+        browser.add_cookie(cookie)
     browser.refresh()
+    sleep(3)
+    save_cookie()
 
 
 def get_comment(browser):
@@ -113,20 +114,10 @@ def calc_comment_seg(comment_list):
         return 0
 
 
-def send_notification(title, desp):
-    api_url = "https://sctapi.ftqq.com/***.send"
-    data = {
-        "title": title,
-        "desp": desp
-    }
-    try:
-        response = requests.post(api_url, data=data)
-    except Exception as e:
-        print("发送通知时出现异常：", str(e))
-
-
-loginUseCookie()
-# loginUsePasswd()
+if config.preference.login_use_password or not config.account[0].cookies:
+    loginUsePasswd()
+else:
+    loginUseCookie()
 
 isExit = False
 retry_time = 0

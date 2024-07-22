@@ -211,6 +211,7 @@ while not isExit:
 
 browser.get("https://www.bilibili.com/judgement/index")
 save_cookie()
+beat_once()
 send_notification("task finish", "Finish bili-judgement")
 browser.close()
 sys.exit(0)

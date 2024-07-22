@@ -37,7 +37,7 @@ def save_cookie():
 def loginUsePasswd():
     browser.get("https://passport.bilibili.com/login")
     browser.find_element('xpath', '//input[@placeholder="请输入账号"]').send_keys(config.account[0].username)
-    browser.find_element('xpath', '//input[@placeholder="请输入密码"]').send_keys(config.account[0].password)
+    browser.find_element('xpath', '//input[@placeholder="请输入密码"]').send_keys(config.account[0].passwd)
     # browser.find_element('xpath', '//input[@type="checkbox"]').click()
     sleep(1)
     browser.find_element('xpath', '//*[@class="btn_wp"]/*[contains(text(),"登录")]').click()

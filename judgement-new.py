@@ -65,7 +65,7 @@ def loginUsePasswd():
 def loginUseCookie():
     browser.get("https://www.bilibili.com/judgement/index")
     browser.delete_all_cookies()
-    cookies_list = json.load(str(base64.b64decode(config.account[0].cookies), 'utf-8'))
+    cookies_list = json.loads(str(base64.b64decode(config.account[0].cookies), 'utf-8'))
     for cookie in cookies_list:
         browser.add_cookie(cookie)
     browser.refresh()

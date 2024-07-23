@@ -25,16 +25,18 @@
 * 使用python3.7或以上版本
 * 克隆或下载本项目，使用`pip install selenium`安装依赖
 * 自行安装 `Chrome` 与 `Chrome Driver`
+* 运行脚本(`judgement-new.py`), 待出现自动生成配置的提示后结束脚本
+* 手动结束脚本后修改自动生成的配置文件(`data/config.yaml`)
 * 运行脚本(`judgement-new.py`)
 
 ## 如何登陆阿b的账号
 
 1. 首次登陆，或者cookie失效后登录（使用账号密码登陆并自动**保存cookie**）：
-* 将代码中的 `loginUseCookie()` 改成 `loginUsePasswd()` ，并确保 `AUTO_SAVE_COOKIE = True` 以及 `COOKIE_PATH` 填写正确
+* 将`data/config.yaml`中的 `login_use_password` 改成 `true` ，并确保 `auto_save_cookies = true`
 * 运行脚本，按照提示登陆
 2. 使用cookie登陆
-* 如已经**保存cookie**，使用 `loginUseCookie()` 登陆即可
-* 如未保存cookie，则使用1中的方法登陆，或者自行抓取 `SESSDATA`、`bili_jct`、`DedeUserID` 三个值填入 `cookies.txt` 
+* 如已经**保存cookie**，将`data/config.yaml`中的 `login_use_password` 改成 `false` 即可
+* 如未保存cookie，则使用1中的方法登陆，或者自行抓取 `SESSDATA`、`bili_jct`、`DedeUserID` 三个值填入 `cookies` 字段 (需要`base64.b64encode(json.dumps(browser.get_cookies()).encode('utf-8'))`)
 
 ## 如何自己训练情感分析文件
 1. 爬取评论

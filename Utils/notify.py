@@ -131,9 +131,9 @@ class UptimeKuma(Heartbeat):
         try:
             response = requests.get(api_endpoint)
             response.raise_for_status()  # Raise an HTTPError on bad status
-            print(f"Heartbeat sent successfully! Status code: {response.status_code}")
+            log.info(f"Heartbeat sent successfully! Status code: {response.status_code}")
         except requests.RequestException as e:
-            print(f"Failed to send heartbeat: {e}")
+            log.error(f"Failed to send heartbeat: {e}")
 
 
 # 单例模式实例化

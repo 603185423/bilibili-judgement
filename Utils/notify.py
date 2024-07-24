@@ -30,7 +30,7 @@ class NotificationSender:
             return
         with self.lock:
             if self.notifications:
-                title = "Senidc"
+                title = config.preference.serverchan.default_title
                 desp = '\n'.join(f"{t}:{d}" for t, d in self.notifications)
                 data = {"title": title, "desp": desp}
                 session = requests.Session()

@@ -20,6 +20,7 @@ CONFIG_PATH = DATA_PATH / "config.yaml"  # if os.getenv("_CONFIG_PATH") is None 
 
 
 class ServerChan(BaseModel):
+    default_title: str = ""
     notify: bool = True
     serverchan_url: str = ""
 

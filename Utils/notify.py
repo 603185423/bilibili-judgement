@@ -19,8 +19,23 @@ class NotificationSender:
         self.timer = threading.Timer(30, self.send_notifications)
         self.timer.start()
 
+    def send_once(self, title: str, desp: str):
+        data = {"title": title, "desp": desp}
+        session = requests.Session()
+        retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
+        session.mount('http://', HTTPAdapter(max_retries=retries))
+        session.mount('https://', HTTPAdapter(max_retries=retries))
+        try:
+            response = session.post(self.api_url, data=data)
+            log.info("通知已发送")
+        except Exception as e:
+            log.error("发送通知时出现异常：", str(e))
+
     def send_notification(self, title, desp):
         if not config.preference.serverchan.notify:
+            return
+        if not config.preference.serverchan.merge_message:
+            self.send_once(title, desp)
             return
         with self.lock:
             self.notifications.append((title, desp))
@@ -32,16 +47,7 @@ class NotificationSender:
             if self.notifications:
                 title = config.preference.serverchan.default_title
                 desp = '\n'.join(f"{t}:{d}" for t, d in self.notifications)
-                data = {"title": title, "desp": desp}
-                session = requests.Session()
-                retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
-                session.mount('http://', HTTPAdapter(max_retries=retries))
-                session.mount('https://', HTTPAdapter(max_retries=retries))
-                try:
-                    response = session.post(self.api_url, data=data)
-                    log.info("通知已发送")
-                except Exception as e:
-                    log.error("发送通知时出现异常：", str(e))
+                self.send_once(title, desp)
             self.notifications = []
         # 重置定时器
         self.timer = threading.Timer(30, self.send_notifications)

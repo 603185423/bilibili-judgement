@@ -23,6 +23,7 @@ class ServerChan(BaseModel):
     default_title: str = ""
     notify: bool = True
     serverchan_url: str = ""
+    merge_message: bool = False
 
 
 class UptimeKuma(BaseModel):

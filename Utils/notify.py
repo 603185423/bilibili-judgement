@@ -155,3 +155,7 @@ def send_notification(title, desp):
 
 def beat_once():
     beat_instance.beat()
+
+
+def start_beat():
+    beat_instance.start()

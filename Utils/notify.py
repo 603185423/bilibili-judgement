@@ -133,6 +133,8 @@ class UptimeKuma(Heartbeat):
         """
         发送心跳到UptimeKuma服务器。
         """
+        if not self.token:
+            return
         api_endpoint = f"{self.url}/api/push/{self.token}?status={self.status}&msg={self.msg}"
         try:
             response = requests.get(api_endpoint)

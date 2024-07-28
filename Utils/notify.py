@@ -11,6 +11,21 @@ from Utils.logger import log
 config = ConfigManager().data_obj
 
 
+def ping_website(url: str) -> int | None:
+
+    try:
+        start_time = time.time()
+        response = requests.get(url)
+        end_time = time.time()
+
+        duration = end_time - start_time
+        response.raise_for_status()
+        return int(duration * 1000)
+    except requests.RequestException as e:
+        log.warning(f"Ping website {url} failed: {e}")
+        return None
+
+
 class NotificationSender:
     def __init__(self):
         self.lock = threading.Lock()
@@ -135,7 +150,10 @@ class UptimeKuma(Heartbeat):
         """
         if not self.token:
             return
-        api_endpoint = f"{self.url}/api/push/{self.token}?status={self.status}&msg={self.msg}"
+        ping_ms = ping_website(self.url)
+        api_endpoint = f"{self.url}/api/push/{self.token}?status={self.status}&msg={self.msg}&ping={ping_ms}"
+        if not ping_ms:
+            api_endpoint = f"{self.url}/api/push/{self.token}?status={self.status}&msg={self.msg}"
         try:
             response = requests.get(api_endpoint)
             response.raise_for_status()  # Raise an HTTPError on bad status

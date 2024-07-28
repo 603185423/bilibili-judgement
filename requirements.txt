@@ -1,0 +1,6 @@
+PyYAML
+pydantic
+loguru
+requests
+urllib3
+selenium

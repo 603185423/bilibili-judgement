@@ -70,7 +70,7 @@ def write_plugin_data(data: Config = None):
         except (AttributeError, TypeError, ValueError):
             log.exception("数据对象序列化失败，可能是数据类型错误")
             return False
-        with open(CONFIG_PATH, "w") as f:
+        with open(CONFIG_PATH, "w", encoding="utf-8") as f:
             f.write(str_data)
         return True
     except OSError:

@@ -38,7 +38,7 @@ class NotificationSender:
 
     def send_once(self, title: str, desp: str, tag: List[str] = None):
         if tag is None:
-            tag = []
+            tag = config.preference.serverchan.sc3_tags
         log.info(f"Sending notification with tags = {tag}")
         log.info(f"Sending notification with tags = {"|".join(tag)}")
         data = {"title": title, "desp": desp, "tags": "|".join(tag)}

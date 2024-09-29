@@ -24,6 +24,7 @@ class ServerChan(BaseModel):
     notify: bool = True
     serverchan_url: str = ""
     merge_message: bool = False
+    sc3_tags: List[str] = ["exp-tag1", "exp-tag2"]
 
 
 class UptimeKuma(BaseModel):
@@ -89,7 +90,7 @@ class ConfigManager:
         """
         if os.path.exists(DATA_PATH) and os.path.isfile(CONFIG_PATH):
             try:
-                with open(CONFIG_PATH, 'r') as file:
+                with open(CONFIG_PATH, 'r', encoding="utf-8") as file:
                     data = yaml.safe_load(file)
                 new_model = Config.model_validate(data)
                 for attr in new_model.model_fields:

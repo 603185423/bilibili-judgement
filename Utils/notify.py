@@ -1,6 +1,8 @@
 import threading
 import time
 from abc import ABC, abstractmethod
+from typing import List
+
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
@@ -34,8 +36,10 @@ class NotificationSender:
         self.timer = threading.Timer(30, self.send_notifications)
         self.timer.start()
 
-    def send_once(self, title: str, desp: str):
-        data = {"title": title, "desp": desp}
+    def send_once(self, title: str, desp: str, tag: List[str] = None):
+        if tag is None:
+            tag = []
+        data = {"title": title, "desp": desp, "tag": "|".join(tag)}
         session = requests.Session()
         retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
         session.mount('http://', HTTPAdapter(max_retries=retries))
@@ -46,11 +50,11 @@ class NotificationSender:
         except Exception as e:
             log.error("发送通知时出现异常：", str(e))
 
-    def send_notification(self, title, desp):
+    def send_notification(self, title: str, desp: str, tag: List[str] = None):
         if not config.preference.serverchan.notify:
             return
         if not config.preference.serverchan.merge_message:
-            self.send_once(title, desp)
+            self.send_once(title, desp, tag)
             return
         with self.lock:
             self.notifications.append((title, desp))
@@ -62,7 +66,8 @@ class NotificationSender:
             if self.notifications:
                 title = config.preference.serverchan.default_title
                 desp = '\n'.join(f"{t}:{d}" for t, d in self.notifications)
-                self.send_once(title, desp)
+                tag = config.preference.serverchan.sc3_tags
+                self.send_once(title, desp, tag)
             self.notifications = []
         # 重置定时器
         self.timer = threading.Timer(30, self.send_notifications)

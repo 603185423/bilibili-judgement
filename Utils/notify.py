@@ -39,7 +39,7 @@ class NotificationSender:
     def send_once(self, title: str, desp: str, tag: List[str] = None):
         if tag is None:
             tag = []
-        data = {"title": title, "desp": desp, "tag": "|".join(tag)}
+        data = {"title": title, "desp": desp, "tags": "|".join(tag)}
         session = requests.Session()
         retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
         session.mount('http://', HTTPAdapter(max_retries=retries))

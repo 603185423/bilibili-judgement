@@ -39,6 +39,8 @@ class NotificationSender:
     def send_once(self, title: str, desp: str, tag: List[str] = None):
         if tag is None:
             tag = []
+        log.info(f"Sending notification with tags = {tag}")
+        log.info(f"Sending notification with tags = {"|".join(tag)}")
         data = {"title": title, "desp": desp, "tags": "|".join(tag)}
         session = requests.Session()
         retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
@@ -66,8 +68,7 @@ class NotificationSender:
             if self.notifications:
                 title = config.preference.serverchan.default_title
                 desp = '\n'.join(f"{t}:{d}" for t, d in self.notifications)
-                tag = config.preference.serverchan.sc3_tags
-                self.send_once(title, desp, tag)
+                self.send_once(title, desp)
             self.notifications = []
         # 重置定时器
         self.timer = threading.Timer(30, self.send_notifications)

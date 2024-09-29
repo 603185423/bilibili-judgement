@@ -36,7 +36,7 @@
 * 运行脚本，按照提示登陆
 2. 使用cookie登陆
 * 如已经**保存cookie**，将`data/config.yaml`中的 `login_use_password` 改成 `false` 即可
-* 如未保存cookie，则使用1中的方法登陆，或者自行抓取 `SESSDATA`、`bili_jct`、`DedeUserID` 三个值填入 `cookies` 字段 (需要`base64.b64encode(json.dumps(browser.get_cookies()).encode('utf-8'))`)
+* 如未保存cookie，则使用1中的方法登陆，或者自行抓取 `SESSDATA`、`bili_jct`、`DedeUserID` 三个值填入 `cookies` 字段 (需要`str(base64.b64encode(json.dumps(browser.get_cookies()).encode('utf-8')), 'utf-8')`)
 
 ## 如何自己训练情感分析文件
 1. 爬取评论

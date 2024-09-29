@@ -31,7 +31,7 @@ browser = Chrome(options=option)
 def save_cookie():
     if not config.preference.auto_save_cookies:
         return
-    config.account[0].cookies = base64.b64encode(json.dumps(browser.get_cookies()).encode('utf-8'))
+    config.account[0].cookies = str(base64.b64encode(json.dumps(browser.get_cookies()).encode('utf-8')), 'utf-8')
     write_plugin_data()
 
 
